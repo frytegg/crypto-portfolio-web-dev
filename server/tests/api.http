@@ -1,0 +1,61 @@
+@baseUrl = http://localhost:3000
+@email = stan@stormier.net
+@password = password123
+@username = testuser
+
+###
+# Inscription
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}",
+  "username": "{{username}}"
+}
+
+###
+# Renvoi de l'email de validation
+# @name resendEmail
+POST {{baseUrl}}/auth/resend-verification-email
+Content-Type: application/json
+
+{
+  "email": "{{email}}"
+}
+
+###
+# Validation de l'email via la réponse de resend-verification-email
+GET {{resendEmail.response.body.verificationUrl}}
+
+###
+# Connexion
+# Le cookie JWT retourné par la réponse peut être réutilisé par le client HTTP de VS Code / IntelliJ.
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+###
+# Profil courant avec le cookie JWT de la requête login
+# @name me
+GET {{baseUrl}}/users/me
+
+###
+# Cas d'erreur: tentative de connexion avant validation de l'email
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "unverified@example.com",
+  "password": "{{password}}"
+}
+
+###
+# Cas d'erreur: accès protégé sans cookie JWT
+GET {{baseUrl}}/users/me
