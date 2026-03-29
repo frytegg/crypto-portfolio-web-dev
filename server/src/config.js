@@ -5,6 +5,7 @@ export default {
   env: process.env.NODE_ENV || 'development',
   mongoUri: process.env.MONGODB_URI || 'mongodb://localhost:35115/myapp',
   appBaseUrl: process.env.APP_BASE_URL || `http://localhost:${process.env.PORT || 3000}`,
+  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   jwt: {
     secret: process.env.JWT_SECRET || 'change-me-in-production',
     cookieName: process.env.JWT_COOKIE_NAME || 'token',
