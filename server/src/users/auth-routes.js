@@ -191,18 +191,33 @@ function authRoutes(app) {
       email: user.email,
       username: user.username,
     }, {
-      expiresIn: '300s',
+      expiresIn: '7d',
     })
 
-    // ...et le stocker dans un cookie sécurisé
+    // ...et le stocker dans un cookie httpOnly.
+    // En prod, front et API sont sur des domaines différents donc il faut
+    // SameSite=None + Secure pour que le cookie passe en cross-site.
     reply.setCookie(config.jwt.cookieName, token, {
       path: '/',
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: config.env === 'production' ? 'none' : 'lax',
       secure: config.env === 'production',
+      maxAge: 7 * 24 * 60 * 60,
     })
 
-    return reply.send({ message: 'Authentification réussie' })
+    return reply.send({
+      message: 'Authentification réussie',
+      user: {
+        id: user._id.toString(),
+        email: user.email,
+        username: user.username,
+      },
+    })
+  })
+
+  app.post('/logout', async (_request, reply) => {
+    reply.clearCookie(config.jwt.cookieName, { path: '/' })
+    return reply.send({ message: 'Déconnexion réussie' })
   })
 }
 
