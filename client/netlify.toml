@@ -1,0 +1,21 @@
+# Config Netlify pour le front.
+# VITE_API_BASE_URL à définir dans les variables d'environnement du site.
+
+[build]
+  base = "client"
+  publish = "dist"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Fallback SPA : toute URL inconnue renvoie index.html (géré par Vue Router)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
